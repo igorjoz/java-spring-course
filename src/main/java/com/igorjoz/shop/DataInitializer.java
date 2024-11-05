@@ -30,7 +30,6 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Create categories
         Category electronics = new Category();
         electronics.setId(UUID.randomUUID());
         electronics.setName("Electronics");
@@ -43,7 +42,6 @@ public class DataInitializer implements CommandLineRunner {
 
         categoryRepository.saveAll(Arrays.asList(electronics, clothing));
 
-        // Create products
         Product laptop = Product.builder()
                 .id(UUID.randomUUID())
                 .name("Laptop")
@@ -65,14 +63,10 @@ public class DataInitializer implements CommandLineRunner {
                 .category(clothing)
                 .build();
 
-        // Assign products to categories
         electronics.setProducts(Arrays.asList(laptop, smartphone));
         clothing.setProducts(Arrays.asList(shirt));
 
-        // Save products
         productRepository.saveAll(Arrays.asList(laptop, smartphone, shirt));
-
-
 
 
         // Find products by partial name
@@ -80,16 +74,13 @@ public class DataInitializer implements CommandLineRunner {
         List<Product> phoneProducts = productRepository.findByNameContainingIgnoreCase("phone");
         phoneProducts.forEach(System.out::println);
 
-        // Check if a product exists by name
         boolean laptopExists = productRepository.existsByName("Laptop");
         System.out.println("Does 'Laptop' exist? " + laptopExists);
 
-        // Count products in 'Clothing' category
         clothing = categoryRepository.findByName("Clothing").orElseThrow();
         long clothingProductCount = productRepository.countByCategory(clothing);
         System.out.println("Number of products in Clothing category: " + clothingProductCount);
 
-        // Delete all products in 'Electronics' category
         electronics = categoryService.findByName("Electronics").orElseThrow();
         productService.deleteByCategory(electronics);
         System.out.println("Deleted all products in Electronics category.");

@@ -29,17 +29,6 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    // Find a category by ID
-    public Optional<Category> findCategoryById(UUID id) {
-        return categoryRepository.findById(id);
-    }
-
-    // Find all categories
-    public List<Category> findAllCategories() {
-        return categoryRepository.findAll();
-    }
-
-
     @Transactional
     public void deleteCategory(UUID id) {
         Category category = categoryRepository.findById(id)
@@ -47,43 +36,37 @@ public class CategoryService {
         categoryRepository.delete(category);
     }
 
-
-    // Delegate methods
+    public Optional<Category> findCategoryById(UUID id) {
+        return categoryRepository.findById(id);
+    }
+    public List<Category> findAllCategories() {
+        return categoryRepository.findAll();
+    }
 
     public Category save(Category category) {
         return categoryRepository.save(category);
     }
-
     public void delete(Category category) {
         categoryRepository.delete(category);
     }
-
-
-
     public Optional<Category> findById(UUID id) {
         return categoryRepository.findById(id);
     }
-
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
-
     public Optional<Category> findByName(String name) {
         return categoryRepository.findByName(name);
     }
-
     public List<Category> findByOrderInShop(int orderInShop) {
         return categoryRepository.findByOrderInShop(orderInShop);
     }
-
     public List<Category> findByNameContainingIgnoreCase(String substring) {
         return categoryRepository.findByNameContainingIgnoreCase(substring);
     }
-
     public long countByName(String name) {
         return categoryRepository.countByName(name);
     }
-
     public boolean existsByName(String name) {
         return categoryRepository.existsByName(name);
     }

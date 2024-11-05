@@ -96,10 +96,6 @@ public class ProductService {
         return productRepository.findByPriceBetween(minPrice, maxPrice);
     }
 
-    public List<Product> findByNameContainingIgnoreCase(String substring) {
-        return productRepository.findByNameContainingIgnoreCase(substring);
-    }
-
     public long countByCategory(Category category) {
         return productRepository.countByCategory(category);
     }

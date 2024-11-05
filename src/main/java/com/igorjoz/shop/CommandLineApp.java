@@ -84,17 +84,15 @@ public class CommandLineApp implements CommandLineRunner {
             System.out.print("Enter category name: ");
             String categoryName = scanner.nextLine();
 
-            // Find or create category
             Category category = categoryService.findByName(categoryName)
                     .orElseGet(() -> {
                         Category newCategory = new Category();
                         newCategory.setId(UUID.randomUUID());
                         newCategory.setName(categoryName);
-                        newCategory.setOrderInShop(999); // Default order
+                        newCategory.setOrderInShop(999);
                         return categoryService.saveCategory(newCategory);
                     });
 
-            // Create and save product
             Product product = Product.builder()
                     .id(UUID.randomUUID())
                     .name(name)
@@ -113,9 +111,9 @@ public class CommandLineApp implements CommandLineRunner {
         try {
             System.out.print("\nEnter product ID (UUID) to delete: ");
             String idStr = scanner.nextLine();
-            UUID productId = UUID.fromString(idStr); // Parse the UUID
+            UUID productId = UUID.fromString(idStr);
 
-            productService.deleteProduct(productId); // Call service to delete product
+            productService.deleteProduct(productId);
             System.out.println("Product deleted successfully.");
         } catch (IllegalArgumentException e) {
             System.out.println("Error deleting product: Invalid UUID format.");
