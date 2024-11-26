@@ -10,9 +10,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = "category")
-public class Product implements Comparable<Product>, Serializable {
+public class Product implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -25,21 +26,8 @@ public class Product implements Comparable<Product>, Serializable {
     @Column(name = "price")
     private double price;
 
-    // Bidirectional relationship
-    @ManyToOne(fetch = FetchType.EAGER)
+    // Many-to-one relationship with Category
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
-
-    @Builder
-    public Product(UUID id, String name, double price, Category category) {
-        this.id = id;
-        this.name = name;
-        this.price = price > 0 ? price : 1.0;
-        this.category = category;
-    }
-
-    @Override
-    public int compareTo(Product other) {
-        return this.name.compareTo(other.name);
-    }
 }

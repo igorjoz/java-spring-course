@@ -12,6 +12,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "id")
 @ToString(exclude = "products")
 public class Category implements Comparable<Category>, Serializable {
@@ -28,7 +29,7 @@ public class Category implements Comparable<Category>, Serializable {
     private int orderInShop;
 
     // Bidirectional relationship; lazy loading
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 
     @Override

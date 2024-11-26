@@ -6,9 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.igorjoz.shop.dto.CategoryCreateDTO;
+import com.igorjoz.shop.dto.CategoryReadDTO;
+import com.igorjoz.shop.dto.CategoryListDTO;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -69,5 +74,56 @@ public class CategoryService {
     }
     public boolean existsByName(String name) {
         return categoryRepository.existsByName(name);
+    }
+
+    // Create a new category
+    public CategoryReadDTO createCategory(CategoryCreateDTO createDTO) {
+        Category category = new Category();
+        category.setId(UUID.randomUUID());
+        category.setName(createDTO.getName());
+        category.setOrderInShop(createDTO.getOrderInShop());
+
+        Category savedCategory = categoryRepository.save(category);
+        return mapToReadDTO(savedCategory);
+    }
+
+    // Read a category by ID
+    public CategoryReadDTO getCategory(UUID id) {
+        return categoryRepository.findById(id)
+                .map(this::mapToReadDTO)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+    }
+
+    // List all categories
+    public List<CategoryListDTO> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(this::mapToListDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Mapping methods
+    private CategoryReadDTO mapToReadDTO(Category category) {
+        CategoryReadDTO dto = new CategoryReadDTO();
+        dto.setId(category.getId());
+        dto.setName(category.getName());
+        dto.setOrderInShop(category.getOrderInShop());
+        return dto;
+    }
+
+    private CategoryListDTO mapToListDTO(Category category) {
+        CategoryListDTO dto = new CategoryListDTO();
+        dto.setId(category.getId());
+        dto.setName(category.getName());
+        return dto;
+    }
+
+    @Transactional
+    public CategoryReadDTO updateCategory(UUID id, CategoryCreateDTO updateDTO) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        category.setName(updateDTO.getName());
+        category.setOrderInShop(updateDTO.getOrderInShop());
+        Category updatedCategory = categoryRepository.save(category);
+        return mapToReadDTO(updatedCategory);
     }
 }

@@ -8,9 +8,14 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.igorjoz.shop.dto.ProductCreateDTO;
+import com.igorjoz.shop.dto.ProductReadDTO;
+import com.igorjoz.shop.dto.ProductListDTO;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -107,5 +112,73 @@ public class ProductService {
     @Transactional
     public void deleteByCategory(Category category) {
         productRepository.deleteByCategory(category);
+    }
+
+    // Create a new product
+    public ProductReadDTO createProduct(UUID categoryId, ProductCreateDTO createDTO) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        Product product = new Product();
+        product.setId(UUID.randomUUID());
+        product.setName(createDTO.getName());
+        product.setPrice(createDTO.getPrice());
+        product.setCategory(category);
+
+        Product savedProduct = productRepository.save(product);
+        return mapToReadDTO(savedProduct);
+    }
+
+    // Read a product by ID
+    public ProductReadDTO getProduct(UUID id) {
+        return productRepository.findById(id)
+                .map(this::mapToReadDTO)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    // List all products
+    public List<ProductListDTO> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(this::mapToListDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Mapping methods
+    private ProductReadDTO mapToReadDTO(Product product) {
+        ProductReadDTO dto = new ProductReadDTO();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setPrice(product.getPrice());
+        dto.setCategoryId(product.getCategory().getId());
+        dto.setCategoryName(product.getCategory().getName());
+        return dto;
+    }
+
+    private ProductListDTO mapToListDTO(Product product) {
+        ProductListDTO dto = new ProductListDTO();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setPrice(product.getPrice());
+        return dto;
+    }
+
+    @Transactional
+    public ProductReadDTO updateProduct(UUID id, ProductCreateDTO updateDTO) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        product.setName(updateDTO.getName());
+        product.setPrice(updateDTO.getPrice());
+        Category category = categoryRepository.findById(updateDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        product.setCategory(category);
+        Product updatedProduct = productRepository.save(product);
+        return mapToReadDTO(updatedProduct);
+    }
+
+    public List<ProductListDTO> getProductsByCategory(UUID categoryId) {
+        List<Product> products = productRepository.findByCategoryId(categoryId);
+        return products.stream()
+                .map(this::mapToListDTO)
+                .collect(Collectors.toList());
     }
 }
