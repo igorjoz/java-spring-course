@@ -1,0 +1,250 @@
+@baseUrl = http://localhost:8080
+
+###
+# Create Category - Electronics
+POST {{baseUrl}}/categories
+Content-Type: application/json
+
+{
+  "name": "Electronics",
+  "orderInShop": 1
+}
+
+> {%
+    client.global.set("electronicsCategoryId", JSON.parse(response.body).id);
+%}
+
+###
+
+# Create Category - Clothing
+POST {{baseUrl}}/categories
+Content-Type: application/json
+
+{
+  "name": "Clothing",
+  "orderInShop": 2
+}
+
+> {%
+    client.global.set("clothingCategoryId", JSON.parse(response.body).id);
+%}
+
+###
+
+# Get All Categories
+GET {{baseUrl}}/categories
+Accept: application/json
+
+###
+
+# Get Category - Electronics
+GET {{baseUrl}}/categories/f6bbd587-0686-49a1-8478-1fbd1fa4129e
+Accept: application/json
+
+###
+
+# Update Category - Electronics
+PUT {{baseUrl}}/categories/f6bbd587-0686-49a1-8478-1fbd1fa4129e
+Content-Type: application/json
+
+{
+  "name": "Electronics & Gadgets",
+  "orderInShop": 1
+}
+
+###
+
+# Get Updated Category - Electronics
+GET {{baseUrl}}/categories/{{electronicsCategoryId}}
+Accept: application/json
+
+###
+
+# Delete Category - Clothing
+DELETE {{baseUrl}}/categories/{{clothingCategoryId}}
+
+###
+
+# Get All Categories After Deletion
+GET {{baseUrl}}/categories
+Accept: application/json
+
+###
+
+# Create Product - Laptop
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "Laptop",
+  "price": 1200.00,
+  "categoryId": "{{electronicsCategoryId}}"
+}
+
+> {%
+    client.global.set("laptopProductId", JSON.parse(response.body).id);
+%}
+
+###
+
+# Create Product - Smartphone
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "Smartphone",
+  "price": 800.00,
+  "categoryId": "{{electronicsCategoryId}}"
+}
+
+> {%
+    client.global.set("smartphoneProductId", JSON.parse(response.body).id);
+%}
+
+###
+
+# Get All Products
+GET {{baseUrl}}/products
+Accept: application/json
+
+###
+
+# Get Product - Laptop
+GET {{baseUrl}}/products/{{laptopProductId}}
+Accept: application/json
+
+###
+
+# Update Product - Laptop
+PUT {{baseUrl}}/products/{{laptopProductId}}
+Content-Type: application/json
+
+{
+  "name": "Laptop Pro",
+  "price": 1100.00,
+  "categoryId": "{{electronicsCategoryId}}"
+}
+
+###
+
+# Get Updated Product - Laptop
+GET {{baseUrl}}/products/{{laptopProductId}}
+Accept: application/json
+
+###
+
+# Delete Product - Smartphone
+DELETE {{baseUrl}}/products/{{smartphoneProductId}}
+
+###
+
+# Get All Products After Deletion
+GET {{baseUrl}}/products
+Accept: application/json
+
+###
+
+# Get Products by Category - Electronics
+GET {{baseUrl}}/products/category/{{electronicsCategoryId}}
+Accept: application/json
+
+###
+
+# Create Product with Invalid Category ID
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "Invalid Product",
+  "price": 999.99,
+  "categoryId": "00000000-0000-0000-0000-000000000000"
+}
+
+###
+
+# Get Product with Invalid ID
+GET {{baseUrl}}/products/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+###
+
+# Create Product without Category ID
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "No Category Product",
+  "price": 99.99
+}
+
+###
+
+# Create Category - Books
+POST {{baseUrl}}/categories
+Content-Type: application/json
+
+{
+  "name": "Books",
+  "orderInShop": 3
+}
+
+> {%
+    client.global.set("booksCategoryId", JSON.parse(response.body).id);
+%}
+
+###
+
+# Create Product - Book One
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "Book One",
+  "price": 19.99,
+  "categoryId": "{{booksCategoryId}}"
+}
+
+> {%
+    client.global.set("bookOneProductId", JSON.parse(response.body).id);
+%}
+
+###
+
+# Create Product - Book Two
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "Book Two",
+  "price": 29.99,
+  "categoryId": "{{booksCategoryId}}"
+}
+
+> {%
+    client.global.set("bookTwoProductId", JSON.parse(response.body).id);
+%}
+
+###
+
+# Get Products by Category - Books
+GET {{baseUrl}}/products/category/{{booksCategoryId}}
+Accept: application/json
+
+###
+
+# Delete Category - Books
+DELETE {{baseUrl}}/categories/{{booksCategoryId}}
+
+###
+
+# Get Products by Category - Books After Deletion
+GET {{baseUrl}}/products/category/{{booksCategoryId}}
+Accept: application/json
+
+###
+
+# Get Product - Book One After Category Deletion
+GET {{baseUrl}}/products/{{bookOneProductId}}
+Accept: application/json
+
+###

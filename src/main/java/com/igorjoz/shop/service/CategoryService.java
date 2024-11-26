@@ -1,6 +1,7 @@
 package com.igorjoz.shop.service;
 
 import com.igorjoz.shop.Category;
+import com.igorjoz.shop.exception.NotFoundException;
 import com.igorjoz.shop.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -120,7 +121,7 @@ public class CategoryService {
     @Transactional
     public CategoryReadDTO updateCategory(UUID id, CategoryCreateDTO updateDTO) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new NotFoundException("Category not found"));
         category.setName(updateDTO.getName());
         category.setOrderInShop(updateDTO.getOrderInShop());
         Category updatedCategory = categoryRepository.save(category);

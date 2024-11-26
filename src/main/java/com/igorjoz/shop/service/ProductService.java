@@ -2,9 +2,11 @@ package com.igorjoz.shop.service;
 
 import com.igorjoz.shop.Product;
 import com.igorjoz.shop.Category;
+import com.igorjoz.shop.dto.ProductUpdateDTO;
+import com.igorjoz.shop.exception.NotFoundException;
 import com.igorjoz.shop.repository.CategoryRepository;
 import com.igorjoz.shop.repository.ProductRepository;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -115,9 +117,12 @@ public class ProductService {
     }
 
     // Create a new product
-    public ProductReadDTO createProduct(UUID categoryId, ProductCreateDTO createDTO) {
+    public ProductReadDTO createProduct(UUID categoryId, ProductCreateDTO createDTO) throws BadRequestException {
+        if (categoryId == null) {
+            throw new BadRequestException("Category ID must not be null");
+        }
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new NotFoundException("Category not found"));
 
         Product product = new Product();
         product.setId(UUID.randomUUID());
@@ -163,14 +168,21 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductReadDTO updateProduct(UUID id, ProductCreateDTO updateDTO) {
+    public ProductReadDTO updateProduct(UUID id, ProductUpdateDTO updateDTO) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-        product.setName(updateDTO.getName());
-        product.setPrice(updateDTO.getPrice());
-        Category category = categoryRepository.findById(updateDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-        product.setCategory(category);
+                .orElseThrow(() -> new NotFoundException("Product not found"));
+
+        if (updateDTO.getName() != null) {
+            product.setName(updateDTO.getName());
+        }
+        if (updateDTO.getPrice() != null) {
+            product.setPrice(updateDTO.getPrice());
+        }
+        if (updateDTO.getCategoryId() != null) {
+            Category category = categoryRepository.findById(updateDTO.getCategoryId())
+                    .orElseThrow(() -> new NotFoundException("Category not found"));
+            product.setCategory(category);
+        }
         Product updatedProduct = productRepository.save(product);
         return mapToReadDTO(updatedProduct);
     }

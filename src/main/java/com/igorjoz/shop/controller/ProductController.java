@@ -3,7 +3,9 @@ package com.igorjoz.shop.controller;
 import com.igorjoz.shop.dto.ProductCreateDTO;
 import com.igorjoz.shop.dto.ProductReadDTO;
 import com.igorjoz.shop.dto.ProductListDTO;
+import com.igorjoz.shop.dto.ProductUpdateDTO;
 import com.igorjoz.shop.service.ProductService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +24,7 @@ public class ProductController {
 
     // Create a new product
     @PostMapping
-    public ResponseEntity<ProductReadDTO> createProduct(@RequestBody ProductCreateDTO createDTO) {
+    public ResponseEntity<ProductReadDTO> createProduct(@RequestBody ProductCreateDTO createDTO) throws BadRequestException {
         ProductReadDTO product = productService.createProduct(createDTO.getCategoryId(), createDTO);
         return ResponseEntity.ok(product);
     }
@@ -36,7 +38,7 @@ public class ProductController {
 
     // Update a product
     @PutMapping("/{id}")
-    public ResponseEntity<ProductReadDTO> updateProduct(@PathVariable UUID id, @RequestBody ProductCreateDTO updateDTO) {
+    public ResponseEntity<ProductReadDTO> updateProduct(@PathVariable UUID id, @RequestBody ProductUpdateDTO updateDTO) {
         ProductReadDTO product = productService.updateProduct(id, updateDTO);
         return ResponseEntity.ok(product);
     }

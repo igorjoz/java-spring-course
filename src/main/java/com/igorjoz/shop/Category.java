@@ -29,7 +29,7 @@ public class Category implements Comparable<Category>, Serializable {
     private int orderInShop;
 
     // Bidirectional relationship; lazy loading
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Product> products;
 
     @Override
